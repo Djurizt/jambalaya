@@ -1,19 +1,13 @@
-name: demo-app
-namespace: s7yusuff
-replicaCount: 2
-
 image:
-  repository: thejurist/demo_project
-  pullPolicy: IfNotPresent
-  tag: V1.0.5
+  repository: thejurist/jambalaya
+  tag: latest
+  pullPolicy: Always
 
-ingress:
-  host: demo.thejurist.org.uk
+service:
+  name: jambalaya
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
 
-storage:
-  size: 1Gi
+resources: {}
 
-hpa:
-  minReplicas: 1
-  maxReplicas: 5
-  targetCPUUtilizationPercentage: 70
