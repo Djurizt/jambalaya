@@ -1,6 +1,6 @@
 image:
   repository: thejurist/jambalaya
-  tag: latest
+  tag: V1.0.15
   pullPolicy: Always
 
 service:
