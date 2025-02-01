@@ -1,0 +1,19 @@
+name: demo-app
+namespace: s7yusuff
+replicaCount: 2
+
+image:
+  repository: thejurist/demo_project
+  pullPolicy: IfNotPresent
+  tag: V1.0.5
+
+ingress:
+  host: demo.thejurist.org.uk
+
+storage:
+  size: 1Gi
+
+hpa:
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70

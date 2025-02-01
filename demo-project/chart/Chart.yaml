@@ -1,0 +1,6 @@
+apiVersion: v2
+name: demo-app
+version: 0.1.0
+description: Helm chart for deploying the demo application
+
+dependencies: []
