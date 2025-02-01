@@ -1,1 +1,1 @@
-# s7yusuff-demo-project
+A simple java code to be deployed using helm & ArgoCD. 

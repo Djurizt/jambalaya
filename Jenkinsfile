@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('docker-hub-auth')
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
         IMAGE_TAG = "V1.0.${BUILD_NUMBER}"  // Set the image tag as an environment variable
     }
     options {
@@ -23,20 +23,20 @@ pipeline {
             }
         }
 
-        // stage('SonarQube Analysis') {
-        //     agent {
-        //         docker { image 'sonarsource/sonar-scanner-cli:5.0.1' }
-        //     }
-        //     environment {
-        //         CI = 'true'
-        //         scannerHome = '/opt/sonar-scanner'
-        //     }
-        //     steps {
-        //         withSonarQubeEnv('sonar') {
-        //             sh "${scannerHome}/bin/sonar-scanner"
-        //         }
-        //     }
-        // }
+        stage('SonarQube Analysis') {
+            agent {
+                docker { image 'sonarsource/sonar-scanner-cli:5.0.1' }
+            }
+            environment {
+                CI = 'true'
+                scannerHome = '/opt/sonar-scanner'
+            }
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+            }
+        }
 
         stage('Login') {
             steps {
@@ -48,27 +48,27 @@ pipeline {
                 steps {
                     sh """
                     cd ${WORKSPACE}/demo-project
-                    docker build -t thejurist/demo_project:${IMAGE_TAG} .
-                    docker push thejurist/demo_project:${IMAGE_TAG}
+                    docker build -t thejurist/jambalaya:${IMAGE_TAG} .
+                    docker push thejurist/jambalaya:${IMAGE_TAG}
                     """
                 }
             }
 
-        stage('Update Image Tag in Helm Repo for ArgoCD') {
-            steps {
-                sh """
-                rm -rf s7yusuff-demo-project || true
-                git clone -b prod git@github.com:DEL-ORG/s7yusuff-demo-project.git
-                cd ${WORKSPACE}/s7yusuff-demo-project/demo-project
-                sed -i 's/tag:.*/tag: ${IMAGE_TAG}/' ./chart/values.yaml
-                git config user.email "gbebejunior@gmail.com"
-                git config user.name "Djurizt"
-                git add ./chart/values.yaml
-                git commit -m "Update image tag to ${IMAGE_TAG}"
-                git push origin prod
-                """
-            }
-        }
+        // stage('Update Image Tag in Helm Repo for ArgoCD') {
+        //     steps {
+        //         sh """
+        //         rm -rf s7yusuff-demo-project || true
+        //         git clone -b prod git@github.com:DEL-ORG/s7yusuff-demo-project.git
+        //         cd ${WORKSPACE}/s7yusuff-demo-project/demo-project
+        //         sed -i 's/tag:.*/tag: ${IMAGE_TAG}/' ./chart/values.yaml
+        //         git config user.email "gbebejunior@gmail.com"
+        //         git config user.name "Djurizt"
+        //         git add ./chart/values.yaml
+        //         git commit -m "Update image tag to ${IMAGE_TAG}"
+        //         git push origin prod
+        //         """
+        //     }
+        // }
     }
     post {
         success {
